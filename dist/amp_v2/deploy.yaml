@@ -1,0 +1,68 @@
+# H2 AMP velocity policy v2 (12 leg joints) — v14_lsgan iter 23400 (2026-07-08)
+# Run: topstar_rl_lab logs/rsl_rl/topstar_h2_velocity_amp/2026-07-06_23-05-21_v14_lsgan
+# vs amp_v1: adds gait_phase obs (gait-clock policy, v13+) → single obs frame is
+# 51 dims (×5 history = 255). REQUIRES h2_amp_rl_runner.py — h2_rl_runner.py
+# feeds zeros for gait_phase, which is out-of-distribution and will destabilize.
+# Yaw tracking verified (behavioral gain 0.96); trained cmd ranges:
+#   vx [-0.5, 0.8]  vy [-0.3, 0.3]  vyaw [-1.57, 1.57]
+# Policy joint order (LEG_JOINT_NAMES regex, alphabetical left-before-right):
+#   0 LHipPitch  -> SDK 0    6 LKnee       -> SDK 3
+#   1 RHipPitch  -> SDK 6    7 RKnee       -> SDK 9
+#   2 LHipRoll   -> SDK 1    8 LAnklePitch -> SDK 4
+#   3 RHipRoll   -> SDK 7    9 RAnklePitch -> SDK 10
+#   4 LHipYaw    -> SDK 2   10 LAnkleRoll  -> SDK 5
+#   5 RHipYaw    -> SDK 8   11 RAnkleRoll  -> SDK 11
+joint_ids_map: [0, 6, 1, 7, 2, 8, 3, 9, 4, 10, 5, 11]
+
+step_dt: 0.02
+
+stiffness: [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 150.0, 150.0, 40.0, 40.0, 40.0, 40.0]
+damping:   [2.0,   2.0,   2.0,   2.0,   2.0,   2.0,   4.0,   4.0,   2.0,  2.0,  2.0,  2.0]
+
+default_joint_pos: [-0.12, -0.12, 0.0, 0.0, 0.0, 0.0, 0.30, 0.30, -0.18, -0.18, 0.0, 0.0]
+
+actions:
+  JointPositionAction:
+    clip: null
+    scale: [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]
+    offset: [-0.12, -0.12, 0.0, 0.0, 0.0, 0.0, 0.30, 0.30, -0.18, -0.18, 0.0, 0.0]
+
+observations:
+  base_ang_vel:
+    params: {}
+    clip: null
+    scale: [0.2, 0.2, 0.2]
+    history_length: 5
+  projected_gravity:
+    params: {}
+    clip: null
+    scale: [1.0, 1.0, 1.0]
+    history_length: 5
+  velocity_commands:
+    params: {command_name: base_velocity}
+    clip: null
+    scale: [1.0, 1.0, 1.0]
+    history_length: 5
+  joint_pos_rel:
+    params: {}
+    clip: null
+    scale: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    history_length: 5
+  joint_vel_rel:
+    params: {}
+    clip: null
+    scale: [0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05]
+    history_length: 5
+  last_action:
+    params: {}
+    clip: null
+    scale: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    history_length: 5
+  gait_phase:
+    params:
+      gait_cycle: 0.85
+      air_ratio: [0.38, 0.38]
+      phase_offset: [0.38, 0.88]
+    clip: null
+    scale: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    history_length: 5
