@@ -13,8 +13,13 @@ the `topstar_mujoco` simulator and policy training.
 - CycloneDDS runtime `libddsc.so.0` and its iceoryx dependencies — easiest via
   ROS 2 Humble (`source /opt/ros/humble/setup.bash` before running, so
   `LD_LIBRARY_PATH` resolves them)
-- `topstar_mujoco` built in a **sibling directory** of this repo:
-  `../topstar_mujoco/simulate/build/topstar_mujoco`
+- [topstar_mujoco](https://github.com/MatrixZTlab/topstar_mujoco) cloned and
+  built in a **sibling directory** of this repo:
+
+  ```bash
+  git clone https://github.com/MatrixZTlab/topstar_mujoco ../topstar_mujoco
+  cd ../topstar_mujoco/simulate && mkdir -p build && cd build && cmake .. && make
+  ```
 - Python: `pip install numpy pyyaml onnxruntime`
 
 ## 3-Terminal MuJoCo Test
